@@ -19,17 +19,28 @@ jobs:
         with:
           distribution: temurin
           java-version: '21'
-          cache: gradle
 
       - name: Instalar Gradle
         uses: gradle/actions/setup-gradle@v4
 
+      - name: Verificar arquivos
+        run: |
+          pwd
+          ls -la
+          find . -maxdepth 3 -type f | sort | head -200
+
       - name: Compilar mod
         run: gradle build
 
-      - name: Disponibilizar arquivo JAR
+      - name: Mostrar arquivos gerados
+        if: always()
+        run: |
+          find . -type f -name "*.jar" -print
+
+      - name: Disponibilizar JAR
         uses: actions/upload-artifact@v4
         with:
           name: something-is-wrong-jar
-          path: build/libs/*.jar
+          path: |
+            **/build/libs/*.jar
           if-no-files-found: error
